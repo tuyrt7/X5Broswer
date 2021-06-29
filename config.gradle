@@ -1,0 +1,89 @@
+ext {
+    //android开发版本配置
+    android = [
+            compileSdkVersion       : 30,
+            buildToolsVersion       : "30.0.2",
+            applicationId           : "com.bayair.xiaoke",
+            minSdkVersion           : 21,
+            targetSdkVersion        : 30,
+            versionCode             : 1,
+            versionName             : '1.0.0',
+            multiDexEnabled      : true,
+    ]
+
+    abiFilters = ['armeabi-v7a'/*,'armeabi', 'arm64-v8a', 'x86', 'x86_64'*/]
+
+    //version配置
+    versions = [
+            junit                   : "4.12",
+            appcompat               : "1.2.0",
+            material                : '1.2.1',
+            constraint              : '2.0.4',
+            annotation              : '1.1.0',
+            lifecycle               : '2.3.1',
+            paging                  : '2.1.2',
+            room                    : '2.2.6',
+            glide                   : '4.11.0',
+            glidetransform          : '4.1.0'
+    ]
+
+    //androidx
+    androidx = [
+            annotation              : 'androidx.annotation:annotation:1.1.0',
+            appcompat               : "androidx.appcompat:appcompat:${versions.appcompat}",
+            material                : "com.google.android.material:material:${versions.material}",
+            constraint              : "androidx.constraintlayout:constraintlayout:${versions.constraint}",
+            //ViewModel、LiveData、lifecycle
+            viewmodel               : "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}",
+            livedata                : "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}",
+            lifecycle               : "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}",
+    ]
+
+    test = [
+            'junit'                 : "junit:junit:${versions['junit']}",
+            'runner'                : 'androidx.test:runner:1.2.0',
+            'espresso-core'         : 'androidx.test.espresso:espresso-core:3.2.0'
+    ]
+
+    //network
+    network = [
+            rxjava                  : 'io.reactivex.rxjava2:rxjava:2.2.19',
+            rxandroid               : 'io.reactivex.rxjava2:rxandroid:2.1.1',
+            okhttp                  : 'com.squareup.okhttp3:okhttp:4.8.1',
+            okhttplogging           : 'com.squareup.okhttp3:logging-interceptor:4.8.1',
+            retrofit                : 'com.squareup.retrofit2:retrofit:2.9.0',
+            retrofitgson            : 'com.squareup.retrofit2:converter-gson:2.9.0',
+           //retrofitscalars         : 'com.squareup.retrofit2:converter-scalars:2.9.0',
+            retrofitadapter         : 'com.squareup.retrofit2:adapter-rxjava2:2.9.0',
+    ]
+
+    room = [
+            room                    : "androidx.room:room-runtime:${versions.room}",
+            roomcompiler            : "androidx.room:room-compiler:${versions.room}",
+    ]
+
+    glide = [
+            glide                   : "com.github.bumptech.glide:glide:${versions.glide}",
+            glidecompiler           : "com.github.bumptech.glide:compiler:${versions.glide}",
+            glidetransform          : "jp.wasabeef:glide-transformations:${versions.glidetransform}",
+    ]
+
+    page = [
+            paging                  : "androidx.paging:paging-runtime:${versions.paging}"
+    ]
+
+    //依赖第三方配置
+    dependencies = [
+            //Utils
+            utilcodex                   : 'com.blankj:utilcodex:1.30.5',
+            BRVAH                       : 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.6',
+            //刷新
+            refresh                     : 'com.scwang.smart:refresh-layout-kernel:2.0.1',
+            refreshheader               : 'com.scwang.smart:refresh-header-classics:2.0.1',
+            refreshfooter               : 'com.scwang.smart:refresh-footer-classics:2.0.1',
+    ]
+
+    androidxs = androidx.values()
+    network = network.values()
+    paging = page.values()
+}

@@ -1,0 +1,11 @@
+xiaoke.keystore \ xiaoke7.keystore 是利用platform.pk8 和 platform.x509.pem 生成签名工具
+bayair.keystore 签名信息：
+signingConfigs {
+    bayair {
+        storeFile file("../keystore/bayair.keystore")
+        storePassword 'bayair123'
+        keyPassword 'bayair123'
+        keyAlias = 'www.bayair.com'
+    }
+}
+
