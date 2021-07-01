@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.run {
             viewModel = mViewModel
+
             btnEnter.setOnClickListener {
                 mViewModel.saveUrl()
                 X5WebActivity.start(this@MainActivity)

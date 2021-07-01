@@ -63,22 +63,23 @@ class X5WebActivity : AppCompatActivity() {
             ivClose.setOnClickListener { finish() }
         }
 
-        loadWebview()
+        loadWebView()
     }
 
-    private fun loadWebview() {
+    private fun loadWebView() {
         if (Settings.webUrl.isEmpty()) {
             toast("访问地址不能为空")
             return
         }
         var url = Settings.webUrl
 //        url = "https://cloud.tencent.com/document/product/647/17021"
-//        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
+        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
 //        url = "https://alivc-demo-cms.alicdn.com/versionProduct/other/htmlSource/beaconTower/index.html"
         log("开始访问：$url")
 
         val webSettings: WebSettings = x5WebView.settings
         webSettings.javaScriptEnabled = true
+        webSettings.javaScriptCanOpenWindowsAutomatically = true
         x5WebView.addJavascriptInterface(InJavaScriptLocalObj(), "local_obj")
 
         //5.0以上开启混合模式加载
@@ -97,6 +98,18 @@ class X5WebActivity : AppCompatActivity() {
         webSettings.setAppCacheEnabled(true)
         webSettings.blockNetworkImage = false
         webSettings.allowFileAccess = true
+        webSettings.mediaPlaybackRequiresUserGesture = false
+
+//        webSettings.setGeolocationEnabled(true);
+//        webSettings.setAppCacheMaxSize(Long.MAX_VALUE);
+//        webSettings.setPluginState(WebSettings.PluginState.ON_DEMAND);
+//        webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+//
+//        webSettings.setUseWideViewPort(true);
+//        webSettings.setSupportZoom(true);
+//        webSettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        webSettings.setBuiltInZoomControls(true);
+//        webSettings.setDisplayZoomControls(false);
 
         //加载本地html文件
         //x5Webview.loadUrl("file:///android_asset/hello.html");
@@ -110,16 +123,11 @@ class X5WebActivity : AppCompatActivity() {
 
     internal inner class MyWebViewClient : WebViewClient() {
 
-        //WebView代表是当前的WebView
-        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            view?.loadUrl(url)
-            return true
-        }
-        /*//WebView代表是当前的WebView
         override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            view.loadUrl(url)
-            return true
-        }*/
+            //view.loadUrl(url)
+            //return true
+            return false
+        }
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
