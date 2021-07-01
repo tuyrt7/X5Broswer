@@ -73,7 +73,7 @@ class X5WebActivity : AppCompatActivity() {
         }
         var url = Settings.webUrl
 //        url = "https://cloud.tencent.com/document/product/647/17021"
-//        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
+        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
 //        url = "https://alivc-demo-cms.alicdn.com/versionProduct/other/htmlSource/beaconTower/index.html"
         log("开始访问：$url")
 
