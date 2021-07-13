@@ -111,14 +111,15 @@ class X5WebActivity : AppCompatActivity() {
 //        webSettings.setBuiltInZoomControls(true);
 //        webSettings.setDisplayZoomControls(false);
 
-        //加载本地html文件
-        //x5Webview.loadUrl("file:///android_asset/hello.html");
-        //加载网络URL
-        x5WebView.loadUrl(url)
         // 设置在当前WebView继续加载网页
         x5WebView.webViewClient = MyWebViewClient()
         x5WebView.webChromeClient = MyWebChromeClient()
         x5WebView.webChromeClientExtension = MyX5WebChromeClientExtension()
+
+        //加载本地html文件
+        //x5Webview.loadUrl("file:///android_asset/hello.html");
+        //加载网络URL
+        x5WebView.loadUrl(url)
     }
 
     internal inner class MyWebViewClient : WebViewClient() {
