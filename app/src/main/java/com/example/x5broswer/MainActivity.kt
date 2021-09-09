@@ -18,7 +18,6 @@ import com.example.x5broswer.web.X5WebActivity
 import com.permissionutil.AdapterPermissionListener
 import com.permissionutil.Permission
 import com.permissionutil.PermissionImpl
-import com.tencent.smtt.export.external.interfaces.UrlRequest
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*

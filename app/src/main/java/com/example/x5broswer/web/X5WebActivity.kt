@@ -8,7 +8,7 @@ import android.os.*
 import android.provider.MediaStore
 import android.util.Log
 import android.webkit.JavascriptInterface
-
+import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.blankj.utilcode.util.BarUtils
@@ -18,8 +18,11 @@ import com.example.x5broswer.databinding.ActivityWebBinding
 import com.example.x5broswer.utils.WebViewExs
 import com.example.x5broswer.utils.log
 import com.example.x5broswer.utils.toast
+import com.tencent.smtt.export.external.extension.interfaces.IX5WebChromeClientExtension
 import com.tencent.smtt.export.external.extension.proxy.ProxyWebChromeClientExtension
-import com.tencent.smtt.export.external.interfaces.*
+import com.tencent.smtt.export.external.interfaces.MediaAccessPermissionsCallback
+import com.tencent.smtt.export.external.interfaces.SslError
+import com.tencent.smtt.export.external.interfaces.SslErrorHandler
 import com.tencent.smtt.sdk.*
 import org.jsoup.Jsoup
 import java.io.File
@@ -46,7 +49,9 @@ class X5WebActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityWebBinding
 
-    private val x5WebView: WebView by lazy { binding.webview }
+    //private val x5WebView: WebView by lazy { binding.webview }
+    private val webBox by lazy { binding.webContainer }
+
     private var mUploadCallback: ValueCallback<Array<Uri>>? = null
     private var imageUri: Uri? = null
     private val REQUEST_CODE: Int = 1000
@@ -55,27 +60,53 @@ class X5WebActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         BarUtils.setNavBarVisibility(this, false)
-        WebViewExs.hookWebView()
+        // WebViewExs.hookWebView()
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_web)
 
         binding.run {
             ivClose.setOnClickListener { finish() }
         }
-
-        loadWebView()
+        //X5的WebView用动态创建，当内核准备好时，在创建，可能是异步也可能是同步操作
+        if (QbSdk.canLoadX5(applicationContext)) {
+            Log.i("TBS_X5", "已安装好，直接显示");
+            createWebView()
+        } else {
+            Log.i("TBS_X5","新安装")
+            Thread {
+                val ok: Boolean = QbSdk.preinstallStaticTbs(applicationContext)
+                Log.i("TBS_X5", "安装成功：$ok")
+                runOnUiThread {
+                    createWebView()
+                }
+            }.start()
+        }
     }
 
-    private fun loadWebView() {
+    private fun createWebView() {
+        //手动创建WebView，显示到容器中，这样就能保证WebView一定是在X5内核准备好后创建的
+        val webView = WebView(this)
+        val params = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT)
+        webBox.addView(webView, params)
+
+        loadWebView(webView)
+    }
+
+    private fun loadWebView(x5WebView: WebView) {
         if (Settings.webUrl.isEmpty()) {
             toast("访问地址不能为空")
             return
         }
-        val url = Settings.webUrl
+        var url = Settings.webUrl
 //        url = "https://cloud.tencent.com/document/product/647/17021"
-//        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
-//        url = "https://alivc-demo-cms.alicdn.com/versionProduct/other/htmlSource/beaconTower/index.html"
+        url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/latest/official-demo/index.html"
+        //url = "https://web.sdk.qcloud.com/trtc/webrtc/demo/detect/index.html"
+        //url = "https://alivc-demo-cms.alicdn.com/versionProduct/other/htmlSource/beaconTower/index.html"
+        //url = "http://debugtbs.qq.com"
         log("开始访问：$url")
+
+        val extension = x5WebView.x5WebViewExtension
+        log("X5 extension：$extension")
 
         val webSettings: WebSettings = x5WebView.settings
         webSettings.javaScriptEnabled = true
@@ -114,7 +145,9 @@ class X5WebActivity : AppCompatActivity() {
         // 设置在当前WebView继续加载网页
         x5WebView.webViewClient = MyWebViewClient()
         x5WebView.webChromeClient = MyWebChromeClient()
-        x5WebView.webChromeClientExtension = MyX5WebChromeClientExtension()
+        //x5WebView.webChromeClientExtension = MyX5WebChromeClientExtension()
+        x5WebView.webChromeClientExtension = MyWebChromeClientExtension2()
+
 
         //加载本地html文件
         //x5Webview.loadUrl("file:///android_asset/hello.html");
@@ -122,13 +155,24 @@ class X5WebActivity : AppCompatActivity() {
         x5WebView.loadUrl(url)
     }
 
+    internal inner class MyWebChromeClientExtension2 :ProxyWebChromeClientExtension() {
+
+        override fun onPermissionRequest(origin: String?, l: Long, callback: MediaAccessPermissionsCallback?): Boolean {
+             callback?.invoke(origin, l, true) ?: return false
+            return true
+        }
+    }
+
     internal inner class MyWebViewClient : WebViewClient() {
 
-        override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
-            //view.loadUrl(url)
-            //return true
-            return false
+        /**
+         * 防止加载网页时调起系统浏览器
+         */
+        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+            view?.loadUrl(url)
+            return true
         }
+
 
         override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
             super.onPageStarted(view, url, favicon)
@@ -181,10 +225,11 @@ class X5WebActivity : AppCompatActivity() {
             //setTitle(title)
         }
 
-        override fun onPermissionRequest(request: PermissionRequest?) {
-            runOnUiThread { request?.grant(request.resources) }
-        }
+        /*  override fun onPermissionRequest(request: PermissionRequest?) {
+              runOnUiThread { request?.grant(request.resources) }
+          }*/
     }
+
 
     private fun pickPhoto() {
         // 指定拍照存储位置的方式调起相机

@@ -10,10 +10,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.tencent.smtt.sdk.WebView
-            android:id="@+id/webview"
+        <LinearLayout
+            android:id="@+id/web_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:orientation="horizontal">
+
+        </LinearLayout>
+<!--        <com.tencent.smtt.sdk.WebView-->
+<!--            android:id="@+id/webview"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" />-->
 
         <ImageView
             android:id="@+id/iv_close"
